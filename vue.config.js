@@ -9,27 +9,27 @@ const pkg = require("./package.json");
 const project = require("./project.json");
 module.exports = {
     //❤️ Multiple pages ~
-    // pages: {
-    //     index: {
-    //         title: "Home",
-    //         entry: "src/main.js",
-    //         template: "public/index.html",
-    //         filename: "index.html",
-    //     },
-    //     $project: {
-    //         title: "Project",
-    //         entry: "src/core/$project/index.js",
-    //         template: "public/$project/index.html",
-    //         filename: "$project/index.html",
-    //     },
-    // },
+    pages: {
+        article: {
+            title: "Home",
+            entry: "demo/A.js",
+            template: "public/article.html",
+            filename: "index.html",
+        },
+        tinymce: {
+            title: "Tinymce编辑器",
+            entry: "demo/T.js",
+            template: "public/tinymce.html",
+            filename: "tinymce/index.html",
+        },
+    },
 
     //⚛️ Proxy ~
     devServer: {
         proxy: {
-            // "/api/cms": {
-            //     target: process.env["DEV_SERVER"] == "true" ? "http://localhost:5120" : "https://xxx.deepberry.cn",
-            // },
+            "/api/cms": {
+                target: process.env["DEV_SERVER"] == "true" ? "http://localhost:5120" : "https://cms.deepberry.cn/",
+            },
         },
     },
 
@@ -40,15 +40,15 @@ module.exports = {
     chainWebpack: (config) => {
         //💘 html-webpack-plugin ~
         // Multiple pages disable the block below
-        config.plugin("html").tap((args) => {
-            args[0].meta = {
-                //------设置SEO信息
-                Keywords: project.keys,
-                Description: project.desc,
-            };
-            args[0].title = project.title; //------自动添加标题后缀
-            return args;
-        });
+        // config.plugin("html").tap((args) => {
+        //     args[0].meta = {
+        //         //------设置SEO信息
+        //         Keywords: project.keys,
+        //         Description: project.desc,
+        //     };
+        //     args[0].title = project.title; //------自动添加标题后缀
+        //     return args;
+        // });
 
         //💝 in-line small imgs ~
         config.module.rule("images").set("parser", {
@@ -71,7 +71,7 @@ function addStyleResource(rule) {
     preload_styles.push(
         path.resolve(__dirname, "./node_modules/csslab/base.less"),
         path.resolve(__dirname, "./node_modules/@deepberry/common/css/global.less"),
-        path.resolve(__dirname, "./src/assets/css/var.less")
+        path.resolve(__dirname, "./assets/css/var.less")
     );
     rule.use("style-resource").loader("style-resources-loader").options({
         patterns: preload_styles,
