@@ -6,7 +6,6 @@
  */
 const path = require("path");
 const pkg = require("./package.json");
-const project = require("./project.json");
 module.exports = {
     //❤️ Multiple pages ~
     pages: {

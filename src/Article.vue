@@ -77,44 +77,6 @@ export default {
             // 画廊
             gallery_index: null,
             images: [],
-
-            // 物品
-            item: {
-                id: "",
-                client: 1,
-            },
-            // BUFF
-            buff: {
-                client: "std",
-                id: "",
-                level: "",
-            },
-            // SKILL
-            skill: {
-                client: "std",
-                id: "",
-                level: "",
-            },
-            // NPC
-            npc: {
-                client: "std",
-                id: "",
-            },
-            author: {
-                id: "",
-            },
-            emotion: {
-                id: "",
-            },
-            // COMMON
-            jx3_element: {
-                style: {
-                    top: 0,
-                    left: 0,
-                    display: "none",
-                },
-                type: "",
-            },
         };
     },
     computed: {
