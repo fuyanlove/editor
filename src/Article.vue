@@ -17,6 +17,7 @@
             class="c-article-pages"
             v-if="!all"
             background
+            center
             :page-size="1"
             :hide-on-single-page="true"
             @current-change="changePage"
