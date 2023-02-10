@@ -17,6 +17,11 @@ export default {
     components: {
         Tinymce,
     },
+    methods: {
+        test: function (content) {
+            console.log(content);
+        },
+    },
 };
 </script>
 

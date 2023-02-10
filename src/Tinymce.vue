@@ -30,10 +30,9 @@ import Editor from "@tinymce/tinymce-vue";
 import Upload from "./Upload";
 import hljs_languages from "../assets/js/hljs_languages.js";
 import { __cms } from "@deepberry/common/data/common.json";
-import axios from "axios";
 
 const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
-const API = API_Root + "api/cms/system/upload/via/cms";
+const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
     name: "Tinymce",
@@ -139,7 +138,9 @@ export default {
                 // Image
                 image_advtab: true,
                 file_picker_types: "file image",
-                images_upload_handler: this.imageUploadHandler,
+                images_upload_url: API,
+                automatic_uploads: true,
+                images_upload_credentials: true,
             },
             mode: "tinymce",
         };
@@ -170,25 +171,6 @@ export default {
         insertResource: function (data) {
             // eslint-disable-next-line no-undef
             tinyMCE.editors["tinymce"].insertContent(data);
-        },
-        imageUploadHandler: function (blobInfo, successFn, failFn) {
-            const file = blobInfo.blob();
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            axios
-                .post(API, formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                })
-                .then((res) => {
-                    successFn(res.data.data.url);
-                })
-                .catch((err) => {
-                    failFn(err);
-                });
         },
     },
     mounted: function () {},
