@@ -75,7 +75,7 @@
 
 <script>
 import axios from "axios";
-import { __cms } from "@deepberry/common/data/common.json";
+import { __cms, __cdn } from "@deepberry/common/data/common.json";
 const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
 const API = API_Root + "api/cms/system/upload/via/cms";
 import { ElButton, ElDialog, ElIcon } from "element-plus";
@@ -186,7 +186,7 @@ export default {
                         });
 
                         // 修改path
-                        file.url = res?.data?.data?.url;
+                        file.url = res?.data?.data?.name && __cdn + res.data.data.name;
 
                         // 额外赋值
                         file.is_img = is_img;
