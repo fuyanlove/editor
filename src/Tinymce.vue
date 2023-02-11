@@ -37,7 +37,7 @@ const API = API_Root + "api/cms/system/upload/via/tinymce";
 export default {
     name: "Tinymce",
     props: ["modelValue", "height", "attachmentEnable"],
-    emits: ["update:modeValue"],
+    emits: ["update:modelValue"],
     data: function () {
         return {
             data: "",
@@ -148,7 +148,7 @@ export default {
     },
     watch: {
         data: function (val) {
-            this.$emit("update:modeValue", val);
+            this.$emit("update:modelValue", val);
         },
         modelValue: {
             immediate: true,
