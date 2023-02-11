@@ -1,6 +1,6 @@
 {
     "name": "@deepberry/editor",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "scripts": {
         "serve": "vue-cli-service serve",
         "dev": "env DEV_SERVER=true vue-cli-service serve",

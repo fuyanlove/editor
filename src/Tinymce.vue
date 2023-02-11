@@ -36,10 +36,11 @@ const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
     name: "Tinymce",
-    props: ["content", "height", "attachmentEnable", "resourceEnable"],
+    props: ["modelValue", "height", "attachmentEnable"],
+    emits: ["update:modeValue"],
     data: function () {
         return {
-            data: this.content,
+            data: "",
             init: {
                 // 选择器
                 selector: "#tinymce",
@@ -145,16 +146,15 @@ export default {
             mode: "tinymce",
         };
     },
-    model: {
-        prop: "content",
-        event: "update",
-    },
     watch: {
-        data: function (newval) {
-            this.$emit("update", newval);
+        data: function (val) {
+            this.$emit("update:modeValue", val);
         },
-        content: function (newval) {
-            this.data = newval;
+        modelValue: {
+            immediate: true,
+            handler: function (val) {
+                this.data = val;
+            },
         },
     },
     methods: {
