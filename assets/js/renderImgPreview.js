@@ -11,13 +11,9 @@ function renderImgPreview(vm, selector = ".c-article img") {
         // 绑定事件挂钩索引位置
         $(ele).on("click", (e) => {
             if (e.target.classList.contains("e-jx3-emotion-img")) return;
-            vm.$hevueImgPreview({
-                multiple: true,
-                nowImgIndex: i,
-                imgList: vm.images,
-                controlBar: false,
-                clickMaskCLose: true,
-            });
+            vm.imageIndex = i;
+            vm.showImageViewer = true;
+            document.body.style.overflow = "hidden";
         });
     });
 }

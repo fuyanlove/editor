@@ -25,17 +25,21 @@
             layout="total, prev, pager, next, jumper"
             :total="total"
         ></el-pagination>
+
+        <!-- 相册 -->
+        <el-image-viewer
+            v-if="showImageViewer"
+            :url-list="images"
+            @close="onImageViewerClose"
+            :initialIndex="imageIndex"
+            hide-on-click-modal
+        ></el-image-viewer>
     </div>
 </template>
 
 <script>
-import { ElPagination, ElButton } from "element-plus";
+import { ElPagination, ElButton, ElImageViewer } from "element-plus";
 import "element-plus/dist/index.css";
-
-// 相册
-import { createApp } from "vue";
-import hevueImgPreview from "hevue-img-preview";
-createApp().use(hevueImgPreview);
 
 // XSS
 import execFilterXSS from "../assets/js/script";
@@ -76,8 +80,9 @@ export default {
             mode: "",
 
             // 画廊
-            gallery_index: null,
+            imageIndex: 0,
             images: [],
+            showImageViewer: false,
         };
     },
     computed: {
@@ -168,6 +173,10 @@ export default {
                 this.doDir();
             });
         },
+        onImageViewerClose: function () {
+            this.showImageViewer = false;
+            document.body.style.overflow = "auto";
+        },
     },
     watch: {
         content: function () {
@@ -182,6 +191,7 @@ export default {
     components: {
         "el-pagination": ElPagination,
         "el-button": ElButton,
+        "el-image-viewer": ElImageViewer,
     },
 };
 </script>
