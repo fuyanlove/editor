@@ -27,18 +27,18 @@
         ></el-pagination>
 
         <!-- 相册 -->
-        <el-image-viewer
+        <!-- <el-image-viewer
             v-if="showImageViewer"
             :url-list="images"
             @close="onImageViewerClose"
             :initialIndex="imageIndex"
             hide-on-click-modal
-        ></el-image-viewer>
+        ></el-image-viewer> -->
     </div>
 </template>
 
 <script>
-import { ElPagination, ElButton, ElImageViewer } from "element-plus";
+import { ElPagination, ElButton } from "element-plus";
 import "element-plus/dist/index.css";
 
 // XSS
@@ -78,11 +78,6 @@ export default {
             page: 1,
             data: [],
             mode: "",
-
-            // 画廊
-            imageIndex: 0,
-            images: [],
-            showImageViewer: false,
         };
     },
     computed: {
@@ -121,8 +116,7 @@ export default {
             renderKatex();
 
             // 画廊（需要在宏、奇穴、物品等之前渲染以排除下方自动生成图片）
-            // renderGallery(this)
-            renderImgPreview(this);
+            renderImgPreview();
         },
         doDir: function () {
             // 显示局部
@@ -173,10 +167,6 @@ export default {
                 this.doDir();
             });
         },
-        onImageViewerClose: function () {
-            this.showImageViewer = false;
-            document.body.style.overflow = "auto";
-        },
     },
     watch: {
         content: function () {
@@ -191,7 +181,6 @@ export default {
     components: {
         "el-pagination": ElPagination,
         "el-button": ElButton,
-        "el-image-viewer": ElImageViewer,
     },
 };
 </script>
