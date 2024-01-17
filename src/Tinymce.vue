@@ -29,7 +29,7 @@
 import Editor from "@tinymce/tinymce-vue";
 import Upload from "./Upload";
 import hljs_languages from "../assets/js/hljs_languages.js";
-import { __cms } from "@deepberry/common/data/common.json";
+import { __cms, __cdn } from "./settings.js";
 
 const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
 const API = API_Root + "api/cms/system/upload/via/tinymce";
@@ -53,7 +53,7 @@ export default {
 
                 // 样式
                 // TODO:
-                content_css: `https://oss.jx3box.com/static/tinymce/skins/content/default/content.min.css`,
+                content_css: `${__cdn}/static/tinymce/skins/content/default/content.min.css`,
                 // content_css: `http://localhost:5000/skins/content/default/content.min.css`,
                 body_class: "c-article c-article-editor c-article-tinymce",
                 height: this.height || 800,
