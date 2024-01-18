@@ -13,7 +13,7 @@ $ tinymce http://localhost:3000
 ## Step.1 Install
 
 ```
-npm install @deepberry/editor
+npm install @suplasercut/editor
 ```
 
 ## Step.2 Import
@@ -21,8 +21,8 @@ npm install @deepberry/editor
 -   指定模块
 
 ```javascript
-import Article from "@deepberry/editor/src/Article.vue";
-import Tinymce from "@deepberry/editor/src/Tinymce.vue";
+import Article from "@suplasercut/editor/src/Article.vue";
+import Tinymce from "@suplasercut/editor/src/Tinymce.vue";
 ```
 
 ## Step.3 Usage
@@ -36,7 +36,7 @@ import Tinymce from "@deepberry/editor/src/Tinymce.vue";
 编辑器
 
 ```html
-<script src="https://cdn.deepberry.cn/static/tinymce/tinymce.min.js?v=0.1.0"></script>
+<script src="https://cdn.gatesstsuperlaser.com/static/tinymce/tinymce.min.js?v=0.1.0"></script>
 <Tinymce v-model="content" :attachmentEnable="true" :resourceEnable="true" :height="300" />
 ```
 

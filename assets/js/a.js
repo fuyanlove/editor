@@ -1,6 +1,11 @@
 // 链接标签
 import url from "url";
-import { getImgLink } from "@deepberry/common/js/utils";
+import { __cdn } from "../../src/settings";
+
+function getImgLink(str) {
+    return __cdn + str;
+}
+
 function formatLink(str) {
     if (!str) return;
 

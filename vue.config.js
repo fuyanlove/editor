@@ -27,7 +27,10 @@ module.exports = {
     devServer: {
         proxy: {
             "/api/cms": {
-                target: process.env["DEV_SERVER"] == "true" ? "http://localhost:38000" : "https://cms.deepberry.cn/",
+                target:
+                    process.env["DEV_SERVER"] == "true"
+                        ? "http://localhost:4100"
+                        : "https://api.gatesstsuperlaser.com/",
             },
         },
     },

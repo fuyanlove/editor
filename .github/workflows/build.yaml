@@ -15,7 +15,7 @@ jobs:
                   always-auth: true
                   node-version: "16.x"
                   registry-url: https://npm.pkg.github.com
-                  scope: "@deepberry"
+                  scope: "@fuyanlove"
 
             - name: Install dependencies
               run: npm install
