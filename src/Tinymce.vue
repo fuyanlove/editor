@@ -15,7 +15,7 @@
             class="c-tinymce"
             placeholder="✔ 图片可右键粘贴或拖拽至编辑器内自动上传 ✔ 支持word/excel内容一键粘贴"
         />
-        <el-alert class="u-tutorial" type="warning" show-icon
+        <el-alert class="u-tutorial" type="warning" show-icon v-if="showTips"
             >进入特殊区域（代码块，折叠块等等）脱离或使用工具栏触发后，请使用键盘方向 → ↓
             键进行脱离，回车只是正常在区块内换行。去掉样式点击第二行第一个&lt;清除格式&gt;即可复位。
             <!-- <a href="" target="_blank">[编辑器使用指南]</a> -->
@@ -36,7 +36,7 @@ const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
     name: "Tinymce",
-    props: ["modelValue", "height", "attachmentEnable"],
+    props: ["modelValue", "height", "attachmentEnable", "showTips"],
     emits: ["update:modelValue"],
     data: function () {
         return {
