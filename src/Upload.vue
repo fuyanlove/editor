@@ -75,6 +75,7 @@
 
 <script>
 import axios from "axios";
+import { uniqBy } from "lodash";
 import { __cdn, __cms } from "./settings.js";
 const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
 const API = API_Root + "api/cms/system/upload/via/cms";
@@ -195,6 +196,7 @@ export default {
                         // 修改状态加入仓库
                         file.status = "success";
                         this.fileList.push(file);
+                        this.fileList = uniqBy(this.fileList, "url");
                         this.selectedCount++;
 
                         this.$forceUpdate();
