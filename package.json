@@ -1,6 +1,6 @@
 {
     "name": "@fuyanlove/suplasercut-editor",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "scripts": {
         "serve": "vue-cli-service serve",
         "dev": "env DEV_SERVER=true vue-cli-service serve",

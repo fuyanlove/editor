@@ -186,7 +186,7 @@ export default {
                         });
 
                         // 修改path
-                        file.url = res?.data?.data?.name && __cdn + res.data.data.name;
+                        file.url = res?.data?.data?.length && __cdn + "/" + res.data.data[0];
 
                         // 额外赋值
                         file.is_img = is_img;
