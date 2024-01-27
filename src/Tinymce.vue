@@ -3,7 +3,7 @@
         <slot name="prepend"></slot>
 
         <div class="c-editor-header">
-            <Upload v-if="attachmentEnable" @insert="insertAttachments" />
+            <Upload v-if="attachmentEnable" @insert="insertAttachments" :uploadFn="uploadFn" />
         </div>
 
         <slot></slot>
@@ -36,7 +36,7 @@ const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
     name: "Tinymce",
-    props: ["modelValue", "height", "attachmentEnable", "showTips"],
+    props: ["modelValue", "height", "attachmentEnable", "showTips", "uploadFn"],
     emits: ["update:modelValue"],
     data: function () {
         return {

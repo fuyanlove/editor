@@ -1,4 +1,7 @@
+const FUYANLOVE_CDN = window.FUYANLOVE_CDN;
+const FUYANLOVE_CMS = window.FUYANLOVE_CMS;
+
 module.exports = {
-    __cdn: "https://cdn.gatesstsuperlaser.com",
-    __cms: "https://api.gatesstsuperlaser.com",
-}
+    __cdn: FUYANLOVE_CDN,
+    __cms: FUYANLOVE_CMS,
+};

@@ -18,12 +18,10 @@
 
             <!-- 文件区 -->
             <el-upload
-                :action="API"
                 list-type="picture-card"
                 :auto-upload="false"
-                :limit="10"
+                :limit="limit"
                 multiple
-                with-credentials
                 :file-list="fileList"
                 :on-change="change"
                 ref="uploadbox"
@@ -74,11 +72,11 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import { uniqBy } from "lodash";
-import { __cdn, __cms } from "./settings.js";
-const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
-const API = API_Root + "api/cms/system/upload/via/cms";
+import { __cdn } from "./settings.js";
+// const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
+// const API = API_Root + "api/cms/system/upload/via/cms";
 import { ElButton, ElDialog, ElIcon } from "element-plus";
 import { Plus, UploadFilled, Delete, Check } from "@element-plus/icons-vue";
 
@@ -112,10 +110,17 @@ export default {
             type: Boolean,
             default: true,
         },
+        limit: {
+            type: Number,
+            default: 10,
+        },
+        uploadFn: {
+            type: Function,
+            required: true,
+        },
     },
     data: function () {
         return {
-            API: API,
             dialogVisible: false,
             tip: this.desc || "一次最多同时上传10个文件（单个文件不超过20M），格式限常见的图片、文档、数据表及压缩包",
             btn_txt: this.text || "上传附件",
@@ -164,14 +169,7 @@ export default {
                 let fdata = new FormData();
                 fdata.append("file", file.raw);
 
-                // 异步上传
-                axios
-                    .post(API, fdata, {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                        withCredentials: true,
-                    })
+                this.uploadFn(file.raw)
                     .then((res) => {
                         if (res.data.code) {
                             this.$message({

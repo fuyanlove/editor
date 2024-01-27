@@ -13,7 +13,7 @@ $ tinymce http://localhost:3000
 ## Step.1 Install
 
 ```
-npm install @suplasercut/editor
+npm install @fuyanlove/editor
 ```
 
 ## Step.2 Import
@@ -21,8 +21,8 @@ npm install @suplasercut/editor
 -   指定模块
 
 ```javascript
-import Article from "@suplasercut/editor/src/Article.vue";
-import Tinymce from "@suplasercut/editor/src/Tinymce.vue";
+import Article from "@fuyanlove/editor/src/Article.vue";
+import Tinymce from "@fuyanlove/editor/src/Tinymce.vue";
 ```
 
 ## Step.3 Usage
