@@ -36,7 +36,7 @@ import Tinymce from "@fuyanlove/editor/src/Tinymce.vue";
 编辑器
 
 ```html
-<script src="https://cdn.gatesstsuperlaser.com/static/tinymce/tinymce.min.js?v=0.1.0"></script>
+<script src="path/to/static/tinymce/tinymce.min.js?v=0.1.0"></script>
 <Tinymce v-model="content" :attachmentEnable="true" :resourceEnable="true" :height="300" />
 ```
 
@@ -45,3 +45,9 @@ import Tinymce from "@fuyanlove/editor/src/Tinymce.vue";
 ```html
 <Upload @insert="insertWhere" @update="getList" @htmlUpdate="getHTML" />
 ```
+
+## 使用说明
+
+需要在引用的库内用 `<script src="path/to/static/**"></script>`, 一般是在 index.html 内引用。
+
+引入全局变量 `window.FUYANLOVE_CDN` 和 `window.FUYANLOVE.CMS` 用于上传和回显资源。
