@@ -1,302 +1,186 @@
 <template>
-    <div class="c-upload">
-        <!-- 上传触发按钮 -->
-        <el-button type="primary" @click="dialogVisible = true" :disabled="!enable">
-            <el-icon class="u-icon">
-                <UploadFilled />
-            </el-icon>
-            {{ btn_txt }}
-        </el-button>
+    <div class="c-editor-tinymce">
+        <slot name="prepend"></slot>
 
-        <!-- 弹出界面 -->
-        <el-dialog class="c-large-dialog" title="上传" v-model="dialogVisible" @close="closeUpload">
-            <!-- 清空按钮 -->
-            <el-button class="u-upload-clear" plain size="small" @click="clear"
-                ><el-icon>
-                    <Delete /> </el-icon
-                >清空</el-button
-            >
+        <div class="c-editor-header">
+            <Upload v-if="attachmentEnable" @insert="insertAttachments" :uploadFn="uploadFn" />
+        </div>
 
-            <!-- 限制提示 -->
-            <el-alert class="u-upload-tip" :title="tip" type="info" show-icon :closable="false"></el-alert>
+        <slot></slot>
 
-            <!-- 文件区 -->
-            <el-upload
-                list-type="picture-card"
-                :auto-upload="false"
-                :limit="limit"
-                multiple
-                :file-list="fileList"
-                :on-change="change"
-                ref="uploadbox"
-                :accept="accept"
-            >
-                <template #default>
-                    <el-icon>
-                        <Plus />
-                    </el-icon>
-                </template>
+        <editor
+            id="tinymce"
+            v-model="data"
+            :init="init"
+            class="c-tinymce"
+            placeholder="✔ 图片可右键粘贴或拖拽至编辑器内自动上传 ✔ 支持word/excel内容一键粘贴"
+        />
+        <el-alert class="u-tutorial" type="warning" show-icon v-if="showTips"
+            >进入特殊区域（代码块，折叠块等等）脱离或使用工具栏触发后，请使用键盘方向 → ↓
+            键进行脱离，回车只是正常在区块内换行。去掉样式点击第二行第一个&lt;清除格式&gt;即可复位。
+            <!-- <a href="" target="_blank">[编辑器使用指南]</a> -->
+        </el-alert>
 
-                <!-- 文件项 -->
-                <template #file="{ file }">
-                    <div
-                        class="u-file-wrapper"
-                        @click="select(file)"
-                        :class="{
-                            isSelected: file.selected,
-                            disabled: file.status != 'success',
-                        }"
-                    >
-                        <!-- FIXME: 此处为强制刷新file，优雅的实现方式有待发掘 -->
-                        <span style="display: none">{{ fileList }}</span>
-                        <!-- 图片类型 -->
-                        <img v-if="file.is_img" class="el-upload-list__item-thumbnail u-imgbox" :src="file.url" alt />
-                        <!-- 其他类型 -->
-                        <div v-else class="u-filebox">
-                            <img class="u-fileplaceholder" svg-inline src="../assets/img/file.svg" />
-                            <span class="u-filename">{{ file.name }}</span>
-                        </div>
-                        <!-- 勾选角标 -->
-                        <label v-show="file.selected" class="u-file-select-label">
-                            <el-icon class="el-icon-upload-success el-icon-check" color="#fff">
-                                <Check />
-                            </el-icon>
-                        </label>
-                    </div>
-                </template>
-            </el-upload>
-
-            <!-- 插入按钮 -->
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="insert">
-                        {{ buttonTXT }}
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <slot name="append"></slot>
     </div>
 </template>
 
 <script>
-// import axios from "axios";
-import { uniqBy } from "lodash";
-import { __cdn } from "./settings.js";
-// const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
-// const API = API_Root + "api/cms/system/upload/via/cms";
-import { ElButton, ElDialog, ElIcon } from "element-plus";
-import { Plus, UploadFilled, Delete, Check } from "@element-plus/icons-vue";
+import Editor from "@tinymce/tinymce-vue";
+import Upload from "./Upload";
+import hljs_languages from "../assets/js/hljs_languages.js";
+import { __cms, __cdn } from "./settings.js";
 
-const imgtypes = ["jpg", "png", "gif", "bmp", "webp", "jpeg", "JPG", "PNG", "GIF", "BMP", "WEBP", "JPEG"];
-const videoTypes = [
-    "mp4",
-    "MP4",
-    "mov",
-    "MOV",
-    "avi",
-    "AVI",
-    "rmvb",
-    "RMVB",
-    "rm",
-    "RM",
-    "flv",
-    "FLV",
-    "3gp",
-    "3GP",
-    "wmv",
-    "WMV",
-    "mkv",
-    "MKV",
-];
+const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
+const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
-    name: "Upload",
-    components: {
-        "el-button": ElButton,
-        "el-dialog": ElDialog,
-        "el-icon": ElIcon,
-        Plus,
-        UploadFilled,
-        Delete,
-        Check,
-    },
-    props: {
-        text: {
-            type: String,
-        },
-        onlyImage: {
-            type: Boolean,
-        },
-        desc: {
-            type: String,
-        },
-        accept: {
-            type: String,
-        },
-        enable: {
-            type: Boolean,
-            default: true,
-        },
-        limit: {
-            type: Number,
-            default: 10,
-        },
-        uploadFn: {
-            type: Function,
-            required: true,
-        },
-    },
+    name: "Tinymce",
+    props: ["modelValue", "height", "attachmentEnable", "showTips", "uploadFn"],
+    emits: ["update:modelValue"],
     data: function () {
         return {
-            dialogVisible: false,
-            tip: this.desc || "一次最多同时上传10个文件（单个文件不超过20M），格式限常见的图片、文档、数据表及压缩包",
-            btn_txt: this.text || "上传附件",
+            data: "",
+            init: {
+                // 选择器
+                selector: "#tinymce",
 
-            fileList: [],
-            selectedCount: 0,
-            insertList: "",
+                // 语言
+                language: "zh_CN",
 
-            // accept: allow_types.accept,
-            // sizeLimit: allow_types.sizeLimit,
+                // 设置
+                convert_urls: false,
+
+                // 样式
+                // TODO:
+                content_css: `${__cdn}/static/tinymce/skins/content/default/content.min.css`,
+                // content_css: `http://localhost:5000/skins/content/default/content.min.css`,
+                body_class: "c-article c-article-editor c-article-tinymce",
+                height: this.height || 800,
+                autosave_ask_before_unload: false,
+
+                // UI
+                icons: "custom",
+                menubar: false,
+                branding: false,
+                contextmenu: "",
+                plugins: [
+                    "link autolink",
+                    "hr lists advlist table codeinline codesample checklist foldtext latex",
+                    "image emoticons media",
+                    "code fullscreen wordcount powerpaste pagebreak printpage", // template anchor jx3icon autosave
+                ],
+                toolbar: [
+                    "undo | formatselect | fontsizeselect | forecolor backcolor | bold italic underline strikethrough superscript subscript | link unlink | fullscreen code", //restoredraft
+                    "removeformat | hr alignleft aligncenter alignright alignjustify indent outdent | bullist numlist checklist table blockquote foldtext codeinline codesample latex | image media", // template anchor jx3icon
+                ],
+                mobile: {
+                    toolbar_drawer: true,
+                    toolbar: [
+                        "undo emoticons bold forecolor backcolor removeformat pagebreak fullscreen",
+                        "hr alignleft aligncenter alignright alignjustify indent outdent bullist numlist checklist table blockquote codesample latex media",
+                    ],
+                },
+                block_formats: "段落=p;一级标题=h1;二级标题=h2;三级标题=h3;四级标题=h4;五级标题=h5;六级标题=h6;",
+                fontsize_formats: "12px 14px 16px 18px 22px 24px 26px 28px 32px 48px 72px",
+                color_map: [
+                    "FF99CC",
+                    "浅粉",
+                    "FF3399",
+                    "深粉",
+                    "FF0000",
+                    "正红",
+                    "CC99FF",
+                    "紫色",
+                    "9933ff",
+                    "深紫",
+
+                    "FFFF99",
+                    "浅黄",
+                    "FFFF00",
+                    "金黄",
+                    "FFCC00",
+                    "亮黄",
+                    "FFCC99",
+                    "浅桃",
+                    "FF6600",
+                    "橘色",
+
+                    "CCFFCC",
+                    "浅绿",
+                    "9bf915",
+                    "荧光绿",
+                    "00FF00",
+                    "辣眼绿",
+                    "49c10f",
+                    "深绿",
+                    "008080",
+                    "深青",
+
+                    "CCFFFF",
+                    "浅蓝",
+                    "00FFFF",
+                    "参考线",
+                    "00CCFF",
+                    "天蓝",
+                    "99CCFF",
+                    "蔚蓝",
+                    "0000FF",
+                    "辣眼蓝",
+
+                    "CC0000",
+                    "深红",
+                    "000000",
+                    "黑色",
+                ],
+
+                codesample_languages: hljs_languages,
+
+                // Image
+                image_advtab: true,
+                file_picker_types: "file image",
+                images_upload_url: API,
+                automatic_uploads: true,
+                images_upload_credentials: true,
+            },
+            mode: "tinymce",
         };
     },
     watch: {
-        fileList: {
-            deep: true,
-            handler: function (newval) {
-                this.$emit("update", newval);
+        data: function (val) {
+            this.$emit("update:modelValue", val);
+        },
+        modelValue: {
+            immediate: true,
+            handler: function (val) {
+                this.data = val;
             },
-        },
-        insertList: function (newval) {
-            this.$emit("htmlUpdate", newval);
-        },
-    },
-    computed: {
-        buttonTXT: function () {
-            return this.selectedCount ? "插 入" : "确 定";
         },
     },
     methods: {
-        change: function (file) {
-            if (file.status != "success") {
-                // 判断大小
-                // if (file.size > this.sizeLimit) {
-                //     this.$message.error("文件超出大小限制");
-                //     this.removeFile(fileList, file.uid);
-                //     return;
-                // }
-
-                // 分析文件类型
-                let ext = file.name.split(".").pop();
-                const is_img = imgtypes.includes(ext);
-                const is_video = videoTypes.includes(ext);
-
-                if (this.onlyImage && !is_img) return;
-
-                // 构建数据
-                let fdata = new FormData();
-                fdata.append("file", file.raw);
-
-                this.uploadFn(file.raw)
-                    .then((res) => {
-                        console.log(res);
-                        // 提醒
-                        this.$message({
-                            message: "上传成功",
-                            type: "success",
-                        });
-
-                        // 修改path
-                        file.url = res?.name && __cdn + "/" + res.name;
-
-                        // 额外赋值
-                        file.is_img = is_img;
-                        file.is_video = is_video;
-                        file.selected = true;
-
-                        // 修改状态加入仓库
-                        file.status = "success";
-                        this.fileList.push(file);
-                        this.fileList = uniqBy(this.fileList, "url");
-                        this.selectedCount++;
-
-                        this.$forceUpdate();
-                    })
-                    .catch((err) => {
-                        if (err.response.data.code) {
-                            this.$message.error(`[${err.response.data.code}] ${err.response.data.message}`);
-                        } else {
-                            this.$message.error("请求异常");
-                        }
-                    });
-            }
+        setup: function (editor) {
+            console.log("ID为: " + editor.id + " 的编辑器即将初始化.");
         },
-        select: function (file) {
-            if (file.status == "success") {
-                file.selected = !file.selected;
-                file.selected ? this.selectedCount++ : this.selectedCount--;
-            }
+        ready: function (editor) {
+            console.log("ID为: " + editor.id + " 的编辑器已初始化完成.");
         },
-        buildHTML: function () {
-            let list = [];
-            this.fileList.forEach((file) => {
-                if (file.selected) {
-                    file.is_img
-                        ? list.push(`<img src="${file.url}" />`)
-                        : file.is_video
-                        ? list.push(`<video src="${file.url}" controls />`)
-                        : list.push(`<a target="_blank" href="${file.url}">${file.name}</a>`);
-                }
-            });
-            this.insertList = list.join(" \n");
-            return this.insertList;
+        insertAttachments: function (data) {
+            // eslint-disable-next-line no-undef
+            tinyMCE.editors["tinymce"].insertContent(data.html);
         },
-        insert: function () {
-            // 关闭窗口
-            this.dialogVisible = false;
-
-            //为空不执行插入
-            if (!this.selectedCount) return;
-
-            // 传递值
-            this.$emit("insert", {
-                list: this.fileList,
-                html: this.buildHTML(),
-            });
-
-            //移除所有选择状态
-            this.resetSelectStatus();
+        insertResource: function (data) {
+            // eslint-disable-next-line no-undef
+            tinyMCE.editors["tinymce"].insertContent(data);
         },
-        resetSelectStatus: function () {
-            this.fileList.forEach((file, i) => {
-                this.fileList[i].selected = false;
-            });
-            this.selectedCount = 0;
-        },
-        clear: function () {
-            this.$refs.uploadbox.clearFiles();
-            this.fileList = [];
-        },
-        removeFile: function (fileList, uid) {
-            fileList.forEach((file, i) => {
-                if (file.uid == uid) {
-                    fileList.splice(i, 1);
-                }
-            });
-        },
-        isImage(file) {
-            let ext = file.name.split(".").pop();
-            return imgtypes.includes(ext);
-        },
-        closeUpload() {
-            this.fileList = [];
-            this.$refs.uploadbox.clearFiles();
-        },
+    },
+    mounted: function () {},
+    components: {
+        Editor,
+        Upload,
     },
 };
 </script>
 
 <style lang="less">
-@import "../assets/css/upload.less";
+@import "../assets/css/tinymce.less";
 </style>
