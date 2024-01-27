@@ -2,7 +2,9 @@
     <div class="c-upload">
         <!-- 上传触发按钮 -->
         <el-button type="primary" @click="dialogVisible = true" :disabled="!enable">
-            <el-icon class="u-icon"><UploadFilled /></el-icon>
+            <el-icon class="u-icon">
+                <UploadFilled />
+            </el-icon>
             {{ btn_txt }}
         </el-button>
 
@@ -10,7 +12,7 @@
         <el-dialog class="c-large-dialog" title="上传" v-model="dialogVisible" @close="closeUpload">
             <!-- 清空按钮 -->
             <el-button class="u-upload-clear" plain size="small" @click="clear"
-                ><el-icon><Delete /></el-icon>清空</el-button
+                ><el-icon> <Delete /> </el-icon>清空</el-button
             >
 
             <!-- 限制提示 -->
@@ -28,7 +30,9 @@
                 :accept="accept"
             >
                 <template #default>
-                    <el-icon><Plus /></el-icon>
+                    <el-icon>
+                        <Plus />
+                    </el-icon>
                 </template>
 
                 <!-- 文件项 -->
@@ -52,7 +56,9 @@
                         </div>
                         <!-- 勾选角标 -->
                         <label v-show="file.selected" class="u-file-select-label">
-                            <el-icon class="el-icon-upload-success el-icon-check" color="#fff"><Check /></el-icon>
+                            <el-icon class="el-icon-upload-success el-icon-check" color="#fff">
+                                <Check />
+                            </el-icon>
                         </label>
                     </div>
                 </template>
@@ -81,6 +87,26 @@ import { ElButton, ElDialog, ElIcon } from "element-plus";
 import { Plus, UploadFilled, Delete, Check } from "@element-plus/icons-vue";
 
 const imgtypes = ["jpg", "png", "gif", "bmp", "webp", "jpeg", "JPG", "PNG", "GIF", "BMP", "WEBP", "JPEG"];
+const videoTypes = [
+    "mp4",
+    "MP4",
+    "mov",
+    "MOV",
+    "avi",
+    "AVI",
+    "rmvb",
+    "RMVB",
+    "rm",
+    "RM",
+    "flv",
+    "FLV",
+    "3gp",
+    "3GP",
+    "wmv",
+    "WMV",
+    "mkv",
+    "MKV",
+];
 
 export default {
     name: "Upload",
@@ -162,6 +188,7 @@ export default {
                 // 分析文件类型
                 let ext = file.name.split(".").pop();
                 const is_img = imgtypes.includes(ext);
+                const is_video = videoTypes.includes(ext);
 
                 if (this.onlyImage && !is_img) return;
 
@@ -171,13 +198,7 @@ export default {
 
                 this.uploadFn(file.raw)
                     .then((res) => {
-                        if (res.data.code) {
-                            this.$message({
-                                message: res.data.msg,
-                                type: "error",
-                            });
-                            return;
-                        }
+                        console.log(res);
                         // 提醒
                         this.$message({
                             message: "上传成功",
@@ -185,10 +206,11 @@ export default {
                         });
 
                         // 修改path
-                        file.url = res?.data?.data?.length && __cdn + "/" + res.data.data[0];
+                        file.url = res?.name && __cdn + "/" + res.name;
 
                         // 额外赋值
                         file.is_img = is_img;
+                        file.is_video = is_video;
                         file.selected = true;
 
                         // 修改状态加入仓库
@@ -220,6 +242,8 @@ export default {
                 if (file.selected) {
                     file.is_img
                         ? list.push(`<img src="${file.url}" />`)
+                        : file.is_video
+                        ? list.push(`<video src="${file.url}" controls />`)
                         : list.push(`<a target="_blank" href="${file.url}">${file.name}</a>`);
                 }
             });
