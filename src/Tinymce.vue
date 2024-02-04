@@ -142,6 +142,7 @@ export default {
                 images_upload_url: API,
                 automatic_uploads: true,
                 images_upload_credentials: true,
+                valid_children: "+body[style]",
             },
             mode: "tinymce",
         };
