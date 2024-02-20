@@ -28,6 +28,7 @@
                 :on-change="change"
                 ref="uploadbox"
                 :accept="accept"
+                :on-exceed="onExceed"
             >
                 <template #default>
                     <el-icon>
@@ -44,8 +45,8 @@
                             isSelected: file.selected,
                             disabled: file.status != 'success',
                         }"
+                        v-loading="file.status === 'uploading'"
                     >
-                        <!-- FIXME: 此处为强制刷新file，优雅的实现方式有待发掘 -->
                         <span style="display: none">{{ fileList }}</span>
                         <!-- 图片类型 -->
                         <img v-if="file.is_img" class="el-upload-list__item-thumbnail u-imgbox" :src="file.url" alt />
@@ -196,9 +197,9 @@ export default {
                 let fdata = new FormData();
                 fdata.append("file", file.raw);
 
+                file.status = "uploading";
                 this.uploadFn(file.raw)
                     .then((res) => {
-                        console.log(res);
                         // 提醒
                         this.$message({
                             message: "上传成功",
@@ -227,6 +228,8 @@ export default {
                         } else {
                             this.$message.error("请求异常");
                         }
+
+                        file.status = "fail";
                     });
             }
         },
