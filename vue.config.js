@@ -21,6 +21,12 @@ module.exports = {
             template: "public/tinymce.html",
             filename: "tinymce/index.html",
         },
+        lightTinymce: {
+            title: "轻量级Tinymce编辑器",
+            entry: "demo/L.js",
+            template: "public/tinymce.html",
+            filename: "lightTinymce/index.html",
+        },
     },
 
     //⚛️ Proxy ~
