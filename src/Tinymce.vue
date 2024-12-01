@@ -57,10 +57,9 @@ export default {
             type: String,
             default: "",
         },
-        uploadUrl: {
-            type: String,
-            default: "",
-            required: true,
+        tinymceUploadFn: {
+            type: Function,
+            default: () => {},
         },
     },
     emits: ["update:modelValue"],
@@ -165,9 +164,10 @@ export default {
                 // Image
                 image_advtab: true,
                 file_picker_types: "file image",
-                images_upload_url: this.uploadUrl,
+                // images_upload_url: this.uploadUrl,
                 automatic_uploads: true,
-                images_upload_credentials: true,
+                // images_upload_credentials: true,
+                images_upload_handler: this.image_upload_handler,
                 valid_children: "+body[style]",
             },
             mode: "tinymce",
@@ -198,6 +198,29 @@ export default {
         insertResource: function (data) {
             // eslint-disable-next-line no-undef
             tinyMCE.editors["tinymce"].insertContent(data);
+        },
+        image_upload_handler: function (blobInfo, success, failure) {
+            const formData = new FormData();
+            formData.append("file", blobInfo.blob(), blobInfo.filename());
+
+            this.tinymceUploadFn(formData)
+                .then((res) => {
+                    const json = res.data;
+
+                    success(json.location);
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        // 请求已发出，但服务器响应的状态码不在 2xx 范围内
+                        failure("Image upload failed. Status: " + error.response.status);
+                    } else if (error.request) {
+                        // 请求已发出，但没有收到响应
+                        failure("Image upload failed. No response received.");
+                    } else {
+                        // 发送请求时出了some问题
+                        failure("Image upload failed. Error: " + error.message);
+                    }
+                });
         },
     },
     mounted: function () {},
