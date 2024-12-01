@@ -6,6 +6,7 @@
             style="padding: 20px"
             @contentRendered="test1"
             @directoryRendered="test2"
+            :domain="domain"
         ></ArticleRender>
         <div id="directory"></div>
     </div>
@@ -21,6 +22,7 @@ export default {
     data: function () {
         return {
             content: demohtml,
+            domain: "https://cdn.iruxu.com",
         };
     },
     components: {

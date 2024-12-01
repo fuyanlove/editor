@@ -70,6 +70,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        domain: {
+            type: String,
+            default: "",
+        },
     },
     data: function () {
         return {
@@ -98,7 +102,7 @@ export default {
         doReg: function (data) {
             if (data) {
                 // 过滤内容
-                data = execLazyload(data);
+                data = execLazyload(data, this.domain);
                 data = execFilterIframe(data);
                 data = execFilterXSS(data, xss_options);
                 data = execFilterLink(data);

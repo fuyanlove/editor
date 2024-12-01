@@ -1,6 +1,12 @@
 <template>
     <div>
-        <Tinymce v-model="content" :attachmentEnable="true" :resourceEnable="true" />
+        <Tinymce
+            v-model="content"
+            :attachmentEnable="true"
+            :resourceEnable="true"
+            :domain="domain"
+            :upload-url="uploadUrl"
+        />
     </div>
 </template>
 
@@ -12,6 +18,8 @@ export default {
     data: function () {
         return {
             content: demohtml,
+            domain: "https://cdn.iruxu.com",
+            uploadUrl: "https://dev.api.iruxu.com/api/cms/admin/upload/tinymce",
         };
     },
     components: {

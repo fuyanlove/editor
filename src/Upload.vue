@@ -79,11 +79,7 @@
 </template>
 
 <script>
-// import axios from "axios";
 import { uniqBy } from "lodash";
-import { __cdn } from "./settings.js";
-// const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
-// const API = API_Root + "api/cms/system/upload/via/cms";
 import { ElButton, ElDialog, ElIcon } from "element-plus";
 import { Plus, UploadFilled, Delete, Check } from "@element-plus/icons-vue";
 
@@ -144,6 +140,10 @@ export default {
         uploadFn: {
             type: Function,
             required: true,
+        },
+        domain: {
+            type: String,
+            default: "",
         },
     },
     data: function () {
@@ -207,7 +207,7 @@ export default {
                         });
 
                         // 修改path
-                        file.url = res?.name && __cdn + "/" + res.name;
+                        file.url = res?.name && this.domain + "/" + res.name;
 
                         // 额外赋值
                         file.is_img = is_img;

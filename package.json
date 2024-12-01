@@ -1,6 +1,6 @@
 {
-    "name": "@fuyanlove/editor",
-    "version": "0.1.5",
+    "name": "@iruxu/editor",
+    "version": "0.1.0",
     "description": "A Vue.js project",
     "scripts": {
         "serve": "vue-cli-service serve",

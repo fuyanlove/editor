@@ -3,7 +3,7 @@
         <slot name="prepend"></slot>
 
         <div class="c-editor-header">
-            <Upload v-if="attachmentEnable" @insert="insertAttachments" :uploadFn="uploadFn" />
+            <Upload v-if="attachmentEnable" @insert="insertAttachments" :uploadFn="uploadFn" :domain="domain" />
         </div>
 
         <slot></slot>
@@ -29,14 +29,40 @@
 import Editor from "@tinymce/tinymce-vue";
 import Upload from "./Upload";
 import hljs_languages from "../assets/js/hljs_languages.js";
-import { __cms, __cdn } from "./settings.js";
-
-const API_Root = process.env.NODE_ENV === "production" ? __cms : "/";
-const API = API_Root + "api/cms/system/upload/via/tinymce";
 
 export default {
     name: "LightTinymce",
-    props: ["modelValue", "height", "attachmentEnable", "showTips", "uploadFn"],
+    props: {
+        modelValue: {
+            type: String,
+            default: "",
+        },
+        height: {
+            type: Number,
+            default: 800,
+        },
+        attachmentEnable: {
+            type: Boolean,
+            default: true,
+        },
+        showTips: {
+            type: Boolean,
+            default: true,
+        },
+        uploadFn: {
+            type: Function,
+            default: () => {},
+        },
+        domain: {
+            type: String,
+            default: "",
+        },
+        uploadUrl: {
+            type: String,
+            default: "",
+            required: true,
+        },
+    },
     emits: ["update:modelValue"],
     data: function () {
         return {
@@ -53,7 +79,7 @@ export default {
 
                 // 样式
                 // TODO:
-                content_css: `${__cdn}/static/tinymce/skins/content/default/content.min.css`,
+                content_css: `${this.domain}/static/tinymce/skins/content/default/content.min.css`,
                 // content_css: `http://localhost:5000/skins/content/default/content.min.css`,
                 body_class: "c-article c-article-editor c-article-tinymce",
                 height: this.height || 800,
@@ -139,7 +165,7 @@ export default {
                 // Image
                 image_advtab: true,
                 file_picker_types: "file image",
-                images_upload_url: API,
+                images_upload_url: this.uploadUrl,
                 automatic_uploads: true,
                 images_upload_credentials: true,
                 valid_children: "+body[style]",

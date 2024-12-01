@@ -35,7 +35,7 @@ module.exports = {
             "/api/cms": {
                 target:
                     process.env["DEV_SERVER"] == "true"
-                        ? "http://localhost:4100"
+                        ? "http://localhost:14150/"
                         : "https://api.gatesstsuperlaser.com/",
             },
         },

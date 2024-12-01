@@ -1,10 +1,9 @@
 // 图片地址&懒加载
-import { __cdn } from "../../src/settings";
-function lazyLoad(str) {
+function lazyLoad(str, domain = "") {
     if (!str) return;
 
     if (str.startsWith("/")) {
-        return __cdn + str;
+        return domain + str;
     }
     return str;
 }
