@@ -49,5 +49,3 @@ import Tinymce from "@iruxu/editor/src/Tinymce.vue";
 ## 使用说明
 
 需要在引用的库内用 `<script src="path/to/static/**"></script>`, 一般是在 index.html 内引用。
-
-引入全局变量 `window.FUYANLOVE_CDN` 和 `window.FUYANLOVE.CMS` 用于上传和回显资源。
